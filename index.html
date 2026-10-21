@@ -30,28 +30,60 @@ h1{margin:2px 0 0;font-size:1.5rem;line-height:1.2}
 .call{display:block;text-align:center;text-decoration:none;background:var(--ink);color:var(--bg);font-weight:700;font-size:1.15rem;padding:16px;border-radius:10px}
 .call:focus-visible,.wa:focus-visible{outline:3px solid var(--red);outline-offset:3px}
 .wa{display:block;text-align:center;text-decoration:none;background:#128c4a;color:#fff;font-weight:700;font-size:1.15rem;padding:16px;border-radius:10px;margin-top:12px}
+.lang{display:flex;justify-content:flex-end;gap:6px;margin-bottom:12px}
+.lang button{font:inherit;font-size:.9rem;font-weight:700;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.lang button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
 </style>
 </head>
 <body>
 <main>
+<div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-lang="es">Español</button><button type="button" data-lang="en">English</button></div>
 <header>
-<p>Ficha médica de emergencia</p>
-<h1>Si necesito ayuda, estos son mis datos</h1>
+<p data-i>card</p>
+<h1 data-i>title</h1>
 </header>
 
-<div class="name"><span>Nombre</span><strong>Guimera Gauna Ximena Soledad</strong></div>
+<div class="name"><span data-i>name</span><strong>Guimera Gauna Ximena Soledad</strong></div>
 
-<div class="blood"><b>0+</b><span>Factor sanguíneo: CERO POSITIVO</span></div>
+<div class="blood"><b>0+</b><span data-i>blood</span></div>
+
 <div class="list">
-<div class="row"><span>Medicación</span><strong>Venlafaxina, triptanol</strong></div>
-<div class="row"><span>Antecedentes médicos</span><strong>Síndrome vasovagal</strong><p class="tip">Si me desmayo, acuéstame de inmediato y eleva mis piernas para facilitar que la sangre regrese al cerebro. Si no puedes acostarme, ayúdame a sentarme e inclina mi cabeza entre las rodillas.</p></div>
-<div class="row"><span>DNI</span><strong>32.956.153</strong></div>
-<div class="row"><span>Nacionalidad</span><strong>Argentina</strong></div>
-<div class="row"><span>Celular</span><strong>291 446-0195</strong></div>
+<div class="row"><span data-i>med</span><strong data-i>medv</strong></div>
+<div class="row"><span data-i>hist</span><strong data-i>histv</strong><p class="tip" data-i>tip</p></div>
+<div class="row"><span data-i>dni</span><strong>32.956.153</strong></div>
+<div class="row"><span data-i>nat</span><strong data-i>natv</strong></div>
+<div class="row"><span data-i>cel</span><strong>291 446-0195</strong></div>
 </div>
 
-<a class="call" href="tel:+542914460195">Llamar al 291 446-0195</a>
-<a class="wa" href="https://wa.me/5492914460195">Escribir por WhatsApp</a>
+<a class="call" href="tel:+542914460195" data-i>call</a>
+<a class="wa" href="https://wa.me/5492914460195" data-i>wa</a>
 </main>
+<script>
+var T={
+es:{card:"Ficha médica de emergencia",title:"Si necesito ayuda, estos son mis datos",name:"Nombre",blood:"Factor sanguíneo: cero positivo",med:"Medicación",medv:"Venlafaxina, triptanol",hist:"Antecedentes médicos",histv:"Síndrome vasovagal",tip:"Si me desmayo, acuéstame de inmediato y eleva mis piernas para facilitar que la sangre regrese al cerebro. Si no puedes acostarme, ayúdame a sentarme e inclina mi cabeza entre las rodillas.",dni:"DNI",nat:"Nacionalidad",natv:"Argentina",cel:"Celular",call:"Llamar al 291 446-0195",wa:"Escribir por WhatsApp",ttl:"Ficha médica de emergencia"},
+en:{card:"Medical emergency card",title:"If I need help, here is my information",name:"Name",blood:"Blood type: O positive",med:"Medication",medv:"Venlafaxine, Triptanol",hist:"Medical history",histv:"Vasovagal syndrome",tip:"If I faint, lay me down right away and raise my legs so blood can return to my brain. If you can\u2019t lay me down, help me sit and lean my head down between my knees.",dni:"National ID (DNI)",nat:"Nationality",natv:"Argentine",cel:"Mobile phone",call:"Call 291 446-0195",wa:"Message on WhatsApp",ttl:"Medical emergency card"}
+};
+function setLang(l){
+  document.documentElement.lang=l;
+  document.title=T[l].ttl;
+  document.querySelectorAll("[data-i]").forEach(function(e){
+    if(!e.dataset.k){e.dataset.k=e.textContent.trim();}
+    e.textContent=T[l][e.dataset.k];
+  });
+  document.querySelectorAll(".lang button").forEach(function(b){
+    b.setAttribute("aria-pressed",String(b.dataset.lang===l));
+  });
+}
+document.querySelectorAll(".lang button").forEach(function(b){
+  b.addEventListener("click",function(){
+    setLang(b.dataset.lang);
+    try{localStorage.setItem("lang",b.dataset.lang);}catch(e){}
+  });
+});
+var start=(navigator.language||"es").slice(0,2)==="en"?"en":"es";
+try{var s=localStorage.getItem("lang");if(s==="es"||s==="en"){start=s;}}catch(e){}
+setLang(start);
+</script>
 </body>
 </html>
